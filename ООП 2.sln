@@ -1,31 +1,106 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ООП 2", "ООП 2\ООП 2.vcxproj", "{31B25B08-7978-4D12-A5F8-02309704F09A}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{31B25B08-7978-4D12-A5F8-02309704F09A}.Debug|x64.ActiveCfg = Debug|x64
-		{31B25B08-7978-4D12-A5F8-02309704F09A}.Debug|x64.Build.0 = Debug|x64
-		{31B25B08-7978-4D12-A5F8-02309704F09A}.Debug|x86.ActiveCfg = Debug|Win32
-		{31B25B08-7978-4D12-A5F8-02309704F09A}.Debug|x86.Build.0 = Debug|Win32
-		{31B25B08-7978-4D12-A5F8-02309704F09A}.Release|x64.ActiveCfg = Release|x64
-		{31B25B08-7978-4D12-A5F8-02309704F09A}.Release|x64.Build.0 = Release|x64
-		{31B25B08-7978-4D12-A5F8-02309704F09A}.Release|x86.ActiveCfg = Release|Win32
-		{31B25B08-7978-4D12-A5F8-02309704F09A}.Release|x86.Build.0 = Release|Win32
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B1823BE9-7959-4810-83AA-CB3539FD6E2D}
-	EndGlobalSection
-EndGlobal
+#include <iostream>
+#include <string>
+#include <Windows.h>
+#include <vector>
+using namespace std;
+
+class EMPLOYEE {
+private:
+	string organization;
+	string position;
+	double experience;
+	const char* name;
+	char gender;
+	int age;
+	double salary;
+public:
+	static int count;
+	EMPLOYEE(const char* organization, const char* position, double experience, const char* name, char gender, int age, double salary)
+	{
+		this->organization = organization;
+		this->position = position;
+		this->experience = experience;
+		this->name = name;
+		this->gender = gender;
+		this->age = age;
+		this->salary = salary;
+		count++;
+	}
+	void GetWorkInfo() {
+		cout << "Место работы: " << organization << endl;
+		cout << "Занимаемая должность: " << position << endl; // получение информации о месте работы, должности, стаже, зп
+		cout << "Стаж работы: " << experience << endl;
+		cout << "Заработная плата: " << salary << endl;
+	}
+	void SetPosition(string position) {
+		this->position = position;		// изменение должности
+	}
+	void SetSalary(double valueSalary) {
+		salary = valueSalary + salary;	// начисление заработной платы
+	}
+	void GetPersonalInfo() {
+		cout << "ФИО: " << name << endl;
+		cout << "Пол: " << gender << endl;	// вывод личных данных
+	}
+	static void showCount()
+	{
+		cout << "Количество сотрудников: " << count << endl;
+	}
+	void SalaryComparsion(EMPLOYEE& second) {
+		if (*this < second) {
+			cout << second.name << " зарабатывает меньше чем " << this->name << endl;	// операция сравнения
+		}
+		else if (*this == second) {
+			cout << second.name << " зарабатывает так же как " << this->name << endl;
+		}
+		else cout << this->name << " зарабатывает больше чем " << second.name << endl;
+	}
+	bool operator < (EMPLOYEE const& other) {
+		return this->salary < other.salary;
+	}											// перегрузка операций
+	bool operator == (EMPLOYEE const& other) {
+		return this->salary == other.salary;
+	}
+	void SalaryAssignment(EMPLOYEE& second) {
+		this->salary = second.salary;	// операция присваивания
+	}
+	void PositionAssignment(EMPLOYEE& second) {
+		this->position = second.position;
+		this->organization = second.organization;
+	}// присвоение чужой должности объекту
+
+	static int GetCount() {
+		return count;
+	}// статический метод, получение количества сотрудников.
+
+	~EMPLOYEE() {
+		count--;
+	}
+};
+int EMPLOYEE::count = 0; // инициализация статической переменной вне класса
+
+int main() {
+	setlocale(LC_ALL, "Russian");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	EMPLOYEE obj1("Районный суд", "Судья", 3,"Игнатов Руслан",'М', 27, 100000);
+	EMPLOYEE obj2("Магазин стройматериалов","Продавец", 7,"Лыткин Игнат", 'М', 35, 30000);
+	EMPLOYEE obj3("Университет","Студент", 1,"Щукина Валерия",'Ж', 19, 5000); // создание массива объектов класса EMPLOYEE.
+	EMPLOYEE objects[3] = {obj1, obj2, obj3};
+	cout << "Насчитывается " << EMPLOYEE::GetCount() << " сотрудника." << endl << endl; // вывод количества объектов.
+	for (int i = 0; i < 3; i++) {
+		objects[i].GetWorkInfo();
+		objects[i].GetPersonalInfo();
+	}// вывод информации о каждом объекте.
+
+	objects[0].SalaryComparsion(objects[2]); // сравнение заработных плат двух объектов
+	cout << endl;
+	objects[2].PositionAssignment(objects[1]); // присвоение объекту должности другого объекта.
+	cout << endl;
+	objects[0].SetSalary(2734); //  увеличение текущей заработной платы объекта на 2734
+	cout << endl;
+	for (int i = 0; i < 3; i++) {
+		objects[i].GetWorkInfo();
+		objects[i].GetPersonalInfo();
+	}// вывод информации о каждом объекте
+}
